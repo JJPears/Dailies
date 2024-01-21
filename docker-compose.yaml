@@ -1,0 +1,9 @@
+version: '3'
+services:
+  db:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql
+      MYSQL_DATABASE: dailies
+    ports:
+      - "3306:3306"
