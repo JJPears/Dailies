@@ -1,5 +1,5 @@
-import datetime
-from app import db
+from datetime import datetime
+from database import db
 
 
 
@@ -7,12 +7,12 @@ from app import db
 # Maybe I want them to be able to link to long term goals?
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    email = db.Column(db.String(), unique=True, nullable=False)
+    username = db.Column(db.String(80), unique=False, nullable=False)
+    email = db.Column(db.String(100), unique=False, nullable=False)
     password = db.Column(db.String(120), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    last_login = db.Column(db.DateTime)
-    habits = db.relationship('habit', backref='user', lazy=True)
+    # created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    # last_login = db.Column(db.DateTime)
+    # habits = db.relationship('habit', backref='user', lazy=True)
 
 
 # TODO need to do email validation/verification
