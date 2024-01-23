@@ -1,8 +1,7 @@
-from flask import Flask, request, jsonify
-from flask_restful import Api, Resource, reqparse
+from flask import Flask
+from flask_restful import Api
 from models.models import User
 from database import db
-from sqlalchemy import create_engine
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:mysql@localhost:3306/dailies'
@@ -22,7 +21,7 @@ if __name__ == '__main__':
         user = User(
             username='test', 
             password='test', 
-            email='test@test.com')        
+            email='test@test.com')
         print("user created:", user)
         db.session.add(user)
         print("user added to session")
