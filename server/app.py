@@ -1,6 +1,5 @@
 from flask import Flask
 from flask_restful import Api
-from models.models import User
 from database import db
 from dotenv import load_dotenv
 import os
