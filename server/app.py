@@ -2,32 +2,16 @@ from flask import Flask
 from flask_restful import Api
 from models.models import User
 from database import db
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:mysql@localhost:3306/dailies'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URI")
 db.init_app(app)
 api = Api(app)
 
 if __name__ == '__main__':
-    print('Starting Flask Server')
-    with app.app_context():
-        print('in app context')
-        try:
-            db.drop_all()
-            db.create_all()
-        except Exception as e:
-            print("Error creating database:", e)
-        print('db created')
-        user = User(
-            username='test', 
-            password='test', 
-            email='test@test.com')
-        print("user created:", user)
-        db.session.add(user)
-        print("user added to session")
-        db.session.commit()
-
-        print(User.query.all())
-
     app.run(debug=True)
 
