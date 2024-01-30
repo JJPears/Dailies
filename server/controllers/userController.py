@@ -2,6 +2,7 @@ from flask import request, jsonify
 from app import app
 from models import User, Habit
 from database import db
+from ..models.helpers import UserValidator
 
 @app.route('/user/<int:user_id>', methods=['GET'])
 def get_user(user_id):
@@ -13,7 +14,17 @@ def get_user(user_id):
 @app.route('/user', methods=['POST'])
 def create_user():
     user_data = request.get_json()
-    pass
+    if not user_data:
+        return jsonify({'error': 'No data provided for creating user'}), 400
+    valid, error = UserValidator.validate(user_data)
+    if not valid:
+        return jsonify({'error': error}), 400
+    
+    user = User(**user_data)
+    db.session.add(user)
+    db.session.commit()
+
+    return jsonify(user.to_json()), 201
 
 @app.route('/user/<int:user_id>', methods=['PUT'])
 def update_user(user_id):
