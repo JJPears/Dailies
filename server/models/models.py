@@ -12,7 +12,19 @@ class User(db.Model):
     password = db.Column(db.String(120), nullable=False)
     # created_at = db.Column(db.DateTime, default=datetime.utcnow)
     # last_login = db.Column(db.DateTime)
-    # habits = db.relationship('habit', backref='user', lazy=True)
+    habits = db.relationship('habit', backref='user', lazy=True)
+
+
+    # this will update the whole object, including setting null values
+    def update(self, user_data):
+        if 'username' in user_data:
+            self.username = user_data['username']
+        if 'email' in user_data:
+            self.email = user_data['email']
+        if 'password' in user_data:
+            self.password = user_data['password']
+        if 'habits' in user_data:
+            self.habits = user_data['habits']
 
 
 # TODO need to do email validation/verification
