@@ -35,3 +35,7 @@ class Habit(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+    def update(self, habit_data):
+        if 'name' in habit_data:
+            self.name = habit_data['name']

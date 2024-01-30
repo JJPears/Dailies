@@ -1,6 +1,6 @@
 from flask import request, jsonify
 from app import app
-from models import User
+from models import User, Habit
 from database import db
 
 @app.route('/user/<int:user_id>', methods=['GET'])
@@ -29,3 +29,21 @@ def update_user(user_id):
     db.session.commit()
 
     return jsonify(user.to_json()), 201
+
+@app.route('/user/<int:user_id>/habit/<int:habit_id>', methods=['PUT'])
+def update_habit(user_id, habit_id):
+    habit_data = request.get_json()
+    if not habit_data:
+        return jsonify({'error': 'No data provided'}), 400
+    user = User.query.get(user_id)
+    if user is None:
+        return jsonify({'error': 'User not found'}), 404
+    habit = Habit.query.get(habit_id)
+    if habit is None:
+        return jsonify({'error': 'Habit not found'}), 404
+    
+    habit.update(habit_data)
+
+    db.session.commit()
+
+    return jsonify(habit.to_json()), 201
