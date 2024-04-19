@@ -1,5 +1,4 @@
 import unittest
-# from ...models.helpers import UserValidator, HabitValidator
 from server.models.helpers import UserValidator, HabitValidator
 
 class TestValidators(unittest.TestCase):
