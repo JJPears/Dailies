@@ -1,0 +1,26 @@
+aniso8601 @ file:///home/conda/feedstock_root/build_artifacts/aniso8601_1618789466884/work
+blinker @ file:///home/conda/feedstock_root/build_artifacts/blinker_1698890160476/work
+cffi @ file:///home/conda/feedstock_root/build_artifacts/cffi_1696001721842/work
+click @ file:///home/conda/feedstock_root/build_artifacts/click_1692311806742/work
+cryptography @ file:///home/conda/feedstock_root/build_artifacts/cryptography-split_1701563217592/work
+Flask @ file:///home/conda/feedstock_root/build_artifacts/flask_1696349106907/work
+Flask-RESTful @ file:///home/conda/feedstock_root/build_artifacts/flask-restful_1684644040547/work
+Flask-SQLAlchemy @ file:///home/conda/feedstock_root/build_artifacts/flask-sqlalchemy_1675194219027/work
+greenlet @ file:///home/conda/feedstock_root/build_artifacts/greenlet_1703201593537/work
+importlib-metadata @ file:///home/conda/feedstock_root/build_artifacts/importlib-metadata_1703269254275/work
+itsdangerous @ file:///home/conda/feedstock_root/build_artifacts/itsdangerous_1648147185463/work
+Jinja2 @ file:///home/conda/feedstock_root/build_artifacts/jinja2_1704966972576/work
+MarkupSafe @ file:///home/conda/feedstock_root/build_artifacts/markupsafe_1695367457567/work
+mysqlclient @ file:///home/conda/feedstock_root/build_artifacts/mysqlclient_1702652770573/work
+pycparser @ file:///home/conda/feedstock_root/build_artifacts/pycparser_1636257122734/work
+PyMySQL @ file:///home/conda/feedstock_root/build_artifacts/pymysql_1687787790599/work
+python-dateutil @ file:///home/conda/feedstock_root/build_artifacts/python-dateutil_1626286286081/work
+python-dotenv @ file:///home/conda/feedstock_root/build_artifacts/python-dotenv-split_1706018097647/work
+pytz @ file:///home/conda/feedstock_root/build_artifacts/pytz_1693930252784/work
+setuptools==69.0.3
+six @ file:///home/conda/feedstock_root/build_artifacts/six_1620240208055/work
+SQLAlchemy @ file:///home/conda/feedstock_root/build_artifacts/sqlalchemy_1704267475853/work
+typing_extensions @ file:///home/conda/feedstock_root/build_artifacts/typing_extensions_1702176139754/work
+Werkzeug @ file:///home/conda/feedstock_root/build_artifacts/werkzeug_1698235201373/work
+wheel==0.42.0
+zipp @ file:///home/conda/feedstock_root/build_artifacts/zipp_1695255097490/work
