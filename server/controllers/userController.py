@@ -13,6 +13,8 @@ def get_user(user_id):
     return jsonify(user.to_json()), 200
 
 
+# TODO add some validation here, currently it's possible to pass null values for fields and will throw an integrity exception in DB
+# Need some kind of validation before we get to data layer
 @app.route("/user", methods=["POST"])
 def create_user():
     user_data = request.get_json()
@@ -42,6 +44,7 @@ def update_user(user_id):
     return jsonify(user.to_json()), 201
 
 
+# TODO data validation needed, same as with create_user
 @app.route("/user/<int:user_id>/habit", methods=["POST"])
 def create_habit(user_id):
     habit_data = request.get_json()

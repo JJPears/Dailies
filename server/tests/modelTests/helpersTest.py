@@ -1,24 +1,25 @@
-import unittest
 from server.models.helpers import UserValidator, HabitValidator
 
-class TestValidators(unittest.TestCase):
-    def test_user_validator(self):
-        # Test with all fields present
-        user_data = {"name": "test", "email": "test@example.com", "password": "password"}
-        self.assertEqual(UserValidator.validate(user_data), (True, None))
+def test_user_validator_all_fields_present():
+    user_data = {"name": "test", "email": "test@example.com", "password": "password"}
+    assert UserValidator.validate(user_data) == (True, None)
 
-        # Test with missing field
-        user_data = {"name": "test", "email": "test@example.com"}
-        self.assertEqual(UserValidator.validate(user_data), (False, "Missing mandatory field: password"))
+def test_user_validator_fields_with_null_values():
+    user_data = {"name": None, "email": "test@example.com", "password": "password"}
+    assert UserValidator.validate(user_data) == (True, None)
 
-    def test_habit_validator(self):
-        # Test with all fields present
-        habit_data = {"name": "test habit"}
-        self.assertEqual(HabitValidator.validate(habit_data), (True, None))
+def test_user_validator_missing_field():
+    user_data = {"name": "test", "email": "test@example.com"}
+    assert UserValidator.validate(user_data) == (False, "Missing mandatory field: password")
 
-        # Test with missing field
-        habit_data = {}
-        self.assertEqual(HabitValidator.validate(habit_data), (False, "Missing mandatory field: name"))
+def test_habit_validator_all_fields_present():
+    habit_data = {"name": "test habit"}
+    assert HabitValidator.validate(habit_data) == (True, None)
 
-if __name__ == '__main__':
-    unittest.main()
+def test_habit_validator_fields_with_null_values():
+    user_data = {"name": None}
+    assert HabitValidator.validate(user_data) == (True, None)
+
+def test_habit_validator_missing_field():
+    habit_data = {}
+    assert HabitValidator.validate(habit_data) == (False, "Missing mandatory field: name")
