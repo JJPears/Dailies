@@ -1,33 +1,25 @@
-import unittest
 from server.models.helpers import UserValidator, HabitValidator
 
-class TestUserValidator(unittest.TestCase):
-    def test_all_fields_present(self):
-        user_data = {"name": "test", "email": "test@example.com", "password": "password"}
-        self.assertEqual(UserValidator.validate(user_data), (True, None))
+def test_user_validator_all_fields_present():
+    user_data = {"name": "test", "email": "test@example.com", "password": "password"}
+    assert UserValidator.validate(user_data) == (True, None)
 
-    def test_fields_with_null_values(self):
-        user_data = {"name": None, "email": "test@example.com", "password": "password"}
-        self.assertEqual(UserValidator.validate(user_data), (True, None))
+def test_user_validator_fields_with_null_values():
+    user_data = {"name": None, "email": "test@example.com", "password": "password"}
+    assert UserValidator.validate(user_data) == (True, None)
 
-    def test_missing_field(self):
-        user_data = {"name": "test", "email": "test@example.com"}
-        self.assertEqual(UserValidator.validate(user_data), (False, "Missing mandatory field: password"))
+def test_user_validator_missing_field():
+    user_data = {"name": "test", "email": "test@example.com"}
+    assert UserValidator.validate(user_data) == (False, "Missing mandatory field: password")
 
+def test_habit_validator_all_fields_present():
+    habit_data = {"name": "test habit"}
+    assert HabitValidator.validate(habit_data) == (True, None)
 
-class TestHabitValidator(unittest.TestCase):
-    def test_all_fields_present(self):
-        habit_data = {"name": "test habit"}
-        self.assertEqual(HabitValidator.validate(habit_data), (True, None))
+def test_habit_validator_fields_with_null_values():
+    user_data = {"name": None}
+    assert HabitValidator.validate(user_data) == (True, None)
 
-    def test_fields_with_null_values(self):
-        user_data = {"name": None}
-        self.assertEqual(HabitValidator.validate(user_data), (True, None))
-
-    def test_missing_field(self):
-        habit_data = {}
-        self.assertEqual(HabitValidator.validate(habit_data), (False, "Missing mandatory field: name"))
-
-
-if __name__ == '__main__':
-    unittest.main()
+def test_habit_validator_missing_field():
+    habit_data = {}
+    assert HabitValidator.validate(habit_data) == (False, "Missing mandatory field: name")
