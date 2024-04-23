@@ -107,7 +107,7 @@ class Habit(db.Model):
         if not valid:
             raise ValueError(error)
         for field in habit_data:
-            if field == "id" or field == "user_id":
+            if field in ("id", "user_id"):
                 continue
             setattr(self, field, habit_data[field])
 

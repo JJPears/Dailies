@@ -1,4 +1,4 @@
-name: run tests
+name: run pylint
 
 on:
   push:
@@ -25,5 +25,5 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Run tests
-      run: pytest ./server -v
+    - name: Run pylint
+      run: pylint server
