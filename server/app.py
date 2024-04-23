@@ -1,8 +1,13 @@
+"""
+Main application module to start application and load config
+"""
+
+import os
 from flask import Flask
 from flask_restful import Api
-from database import db
 from dotenv import load_dotenv
-import os
+from server.database import db
+
 
 load_dotenv()
 

@@ -1,0 +1,5 @@
+[MASTER]
+ignore = tests
+
+[MESSAGES CONTROL]
+disable = W0511
