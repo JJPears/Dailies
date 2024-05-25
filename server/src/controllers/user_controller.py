@@ -5,9 +5,9 @@ It handles the requests for creating, updating, and getting users and habits.
 
 
 from flask import request, jsonify
-from server.app import app
-from server.models.models import User, Habit
-from server.database import db
+from server.src.app import app
+from server.src.models.models import User, Habit
+from server.src.database import db
 
 
 @app.route("/user/<int:user_id>", methods=["GET"])

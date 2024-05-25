@@ -3,7 +3,7 @@ Module containing database entities for user and habit, alongside logic for oper
 such as updating and creating.
 """
 
-from server.database import db
+from server.src.database import db
 from ..models.helpers import DataValidator
 
 

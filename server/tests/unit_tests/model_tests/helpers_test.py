@@ -1,5 +1,5 @@
 #pylint: skip-file
-from server.models.helpers import DataValidator
+from server.src.models.helpers import DataValidator
 
 def test_user_validator_all_fields_present():
     user_data = {"name": "test", "email": "test@example.com", "password": "password"}
