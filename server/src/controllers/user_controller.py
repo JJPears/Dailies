@@ -4,13 +4,14 @@ It handles the requests for creating, updating, and getting users and habits.
 """
 
 
-from flask import request, jsonify
-from server.src.app import app
+from flask import request, jsonify, Blueprint
 from server.src.models.models import User, Habit
 from server.src.database import db
 
 
-@app.route("/user/<int:user_id>", methods=["GET"])
+user_controller = Blueprint('user_controller', __name__)
+
+@user_controller.route("/user/<int:user_id>", methods=["GET"])
 def get_user(user_id):
     """
     Get a user by ID.
@@ -28,7 +29,7 @@ def get_user(user_id):
 # TODO add some validation here, currently it's possible to pass null values
 # for fields and will throw an integrity exception in DB
 # Need some kind of validation before we get to data layer
-@app.route("/user", methods=["POST"])
+@user_controller.route("/user", methods=["POST"])
 def create_user():
     """
     Create a new user.
@@ -48,7 +49,7 @@ def create_user():
     return jsonify(user.to_json()), 201
 
 
-@app.route("/user/<int:user_id>", methods=["PUT"])
+@user_controller.route("/user/<int:user_id>", methods=["PUT"])
 def update_user(user_id):
     """
     Update a user by ID.
@@ -71,7 +72,7 @@ def update_user(user_id):
 
 
 # TODO data validation needed, same as with create_user
-@app.route("/user/<int:user_id>/habit", methods=["POST"])
+@user_controller.route("/user/<int:user_id>/habit", methods=["POST"])
 def create_habit(user_id):
     """
     Create a new habit for a user.
@@ -91,7 +92,7 @@ def create_habit(user_id):
     return jsonify(habit.to_json()), 201
 
 
-@app.route("/user/<int:user_id>/habit/<int:habit_id>", methods=["PUT"])
+@user_controller.route("/user/<int:user_id>/habit/<int:habit_id>", methods=["PUT"])
 def update_habit(user_id, habit_id):
     """
     Update a habit for a user.

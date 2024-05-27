@@ -23,7 +23,7 @@ class User(db.Model):
     username = db.Column(db.String(80), unique=False, nullable=False)
     email = db.Column(db.String(100), unique=False, nullable=False)
     password = db.Column(db.String(120), nullable=False)
-    habits = db.relationship("habit", backref="user", lazy=True)
+    habits = db.relationship("Habit", backref="user", lazy=True)
 
     def update(self, user_data):
         """
