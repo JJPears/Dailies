@@ -39,7 +39,6 @@ def client(app):
 def runner(app):
     return app.test_cli_runner()
 
-
 def test_get_user_when_user_exists(app_context):
     # Arrange
     mock_user = MagicMock()
