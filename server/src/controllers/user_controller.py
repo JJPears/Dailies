@@ -3,13 +3,14 @@ This module is a controller for the user model and its associated habits.
 It handles the requests for creating, updating, and getting users and habits.
 """
 
-
+from sqlalchemy.exc import DataError
+from sqlalchemy.exc import IntegrityError
 from flask import request, jsonify, Blueprint
 from server.src.models.models import User, Habit
 from server.src.database import db
 
+user_controller = Blueprint("user_controller", __name__)
 
-user_controller = Blueprint('user_controller', __name__)
 
 @user_controller.route("/user/<int:user_id>", methods=["GET"])
 def get_user(user_id):
@@ -34,7 +35,7 @@ def create_user():
     """
     Create a new user.
 
-    :return: A JSON object of the created user and a 201 HTTP status code if the user 
+    :return: A JSON object of the created user and a 201 HTTP status code if the user
              is created successfully, else an error message and a 400 HTTP status code.
     """
     user_data = request.get_json()
@@ -43,9 +44,10 @@ def create_user():
     try:
         user = User.create(user_data)
         db.session.commit()
-        # TODO probably need to handle data integrity exceptions
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
+    except (IntegrityError, DataError) as e:
+        return jsonify({"error": "Data integrity error: " + str(e)}), 400
     return jsonify(user.to_json()), 201
 
 
@@ -64,21 +66,24 @@ def update_user(user_id):
     user = User.query.get(user_id)
     if user is None:
         return jsonify({"error": "User not found"}), 404
-
-    user.update(user_data)
-    db.session.commit()
+    try:
+        user.update(user_data)
+        db.session.commit()
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+    except (IntegrityError, DataError) as e:
+        return jsonify({"error": "Data integrity error: " + str(e)}), 400
 
     return jsonify(user.to_json()), 201
 
 
-# TODO data validation needed, same as with create_user
 @user_controller.route("/user/<int:user_id>/habit", methods=["POST"])
 def create_habit(user_id):
     """
     Create a new habit for a user.
 
     :param user_id: The ID of the user to create the habit for.
-    :return: A JSON object of the created habit and a 201 HTTP status code if the habit is 
+    :return: A JSON object of the created habit and a 201 HTTP status code if the habit is
              created successfully, else an error message and a 400 HTTP status code.
     """
     habit_data = request.get_json()
@@ -89,6 +94,8 @@ def create_habit(user_id):
         db.session.commit()
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
+    except (IntegrityError, DataError) as e:
+        return jsonify({"error": "Data integrity error: " + str(e)}), 400
     return jsonify(habit.to_json()), 201
 
 
@@ -112,7 +119,12 @@ def update_habit(user_id, habit_id):
     if habit is None:
         return jsonify({"error": "Habit not found"}), 404
 
-    habit.update(habit_data)
-    db.session.commit()
+    try:
+        habit.update(habit_data)
+        db.session.commit()
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+    except (IntegrityError, DataError) as e:
+        return jsonify({"error": "Data integrity error: " + str(e)}), 400
 
     return jsonify(habit.to_json()), 201

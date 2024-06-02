@@ -50,6 +50,7 @@ class User(db.Model):
     def create(user_data):
         """
         Creates a new user with the given data, including creating habits where applicable.
+        If id is passed in user_data this is removed before creating the user.
 
         Args:
             user_data (dict): The data to create the user with.
@@ -60,6 +61,13 @@ class User(db.Model):
         Returns:
             User: The created user object.
         """
+        # TODO look into using either marshamllow or pydantic for validation
+        valid, error = DataValidator.validate_user_data(user_data)
+        if not valid:
+            raise ValueError(error)
+        if "id" in user_data:
+            user_data.pop("id")
+
         habits = []
         if "habits" in user_data:
             habits_data = user_data.pop("habits")
