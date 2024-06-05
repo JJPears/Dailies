@@ -2,10 +2,12 @@
 import pytest
 from unittest.mock import patch, MagicMock
 from server.src.controllers.user_controller import get_user, create_user
-from server.src.models.models import User
+from server.src.models.models import User, Habit
 from server.src.app import create_app
 from server.src.database import db
 from sqlalchemy.orm import Query
+from sqlalchemy.exc import DataError
+from sqlalchemy.exc import IntegrityError
 from flask import jsonify
 
 
@@ -101,3 +103,61 @@ def test_create_user_should_return_400_when_user_data_is_invalid(app_context, cl
         assert response.status_code == 400
         assert response.get_json() == expected
 
+def test_create_habit_should_return_201_when_habit_is_created(app_context, client):
+    # Arrange
+    mock_habit = MagicMock()
+    mock_habit.to_json.return_value = {"id": 1, "name": "Test Habit", "user_id": 1}
+    habit_data = {"name": "Test Habit"}
+    with patch.object(Habit, 'create', return_value=mock_habit) as mock_create_habit:
+        # Act
+        response = client.post("/user/1/habit", json=habit_data, content_type='application/json')
+        # Assert
+        mock_create_habit.assert_called_once_with(habit_data, 1)
+        assert response.status_code == 201
+        assert response.get_json() == mock_habit.to_json()
+
+# def test_create_habit_should_return_404_when_user_not_found(app_context, client):
+    # TODO I think I need an exception handler to deal with things like this
+
+
+def test_create_habit_should_return_400_when_no_data_is_provided(app_context, client):
+    # Arrange
+    expected = {"error": "No data provided for creating habit"}
+    # Act
+    response = client.post("/user/1/habit", json={}, content_type='application/json')
+    # Assert
+    assert response.status_code == 400
+    assert response.get_json() == expected
+
+def test_create_habit_should_return_400_when_habit_data_is_invalid(app_context, client):
+    # Arrange
+    expected = {"error": "Invalid habit data"}
+    with patch.object(Habit, 'create', side_effect=ValueError("Invalid habit data")) as mock_create_habit:
+        # Act
+        response = client.post("/user/1/habit", json={"name": "Test Habit"}, content_type='application/json')
+        # Assert
+        mock_create_habit.assert_called_once()
+        assert response.status_code == 400
+        assert response.get_json() == expected
+
+def test_create_habit_should_return_400_when_data_integrity_error_occurs(app_context, client):
+    # Arrange
+    expected = {"error": "Data integrity error"}
+    with patch.object(Habit, 'create', side_effect=IntegrityError("statement", "params", "Data integrity error: IntegrityError")) as mock_create_habit:
+        # Act
+        response = client.post("/user/1/habit", json={"name": "Test Habit"}, content_type='application/json')
+        # Assert
+        mock_create_habit.assert_called_once()
+        assert response.status_code == 400
+        assert response.get_json() == expected
+
+def test_create_habit_should_return_400_when_data_error_occurs(app_context, client):
+    # Arrange
+    expected = {"error": "Data integrity error"}
+    with patch.object(Habit, 'create', side_effect=DataError("statement", "params", "DataError")) as mock_create_habit:
+        # Act
+        response = client.post("/user/1/habit", json={"name": "Test Habit"}, content_type='application/json')
+        # Assert
+        mock_create_habit.assert_called_once()
+        assert response.status_code == 400
+        assert response.get_json() == expected
