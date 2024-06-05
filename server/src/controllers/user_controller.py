@@ -8,6 +8,7 @@ from sqlalchemy.exc import IntegrityError
 from flask import request, jsonify, Blueprint
 from server.src.models.models import User, Habit
 from server.src.database import db
+import logging
 
 user_controller = Blueprint("user_controller", __name__)
 
@@ -95,7 +96,8 @@ def create_habit(user_id):
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
     except (IntegrityError, DataError) as e:
-        return jsonify({"error": "Data integrity error: " + str(e)}), 400
+        logging.error("Data integrity error: %s", e)
+        return jsonify({"error": "Data integrity error"}), 400
     return jsonify(habit.to_json()), 201
 
 
