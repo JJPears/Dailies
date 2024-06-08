@@ -2,6 +2,7 @@
 This module is a controller for the user model and its associated habits.
 It handles the requests for creating, updating, and getting users and habits.
 """
+
 from flask import request, jsonify, Blueprint
 from werkzeug.exceptions import NotFound, BadRequest
 from server.src.models.models import User, Habit
@@ -24,6 +25,7 @@ def get_user(user_id):
         print("Testting")
         raise NotFound("User not found")
     return jsonify(user.to_json()), 200
+
 
 @user_controller.route("/user", methods=["POST"])
 def create_user():
@@ -75,7 +77,7 @@ def create_habit(user_id):
     habit_data = request.get_json()
     if not habit_data:
         raise BadRequest("No habit data provided")
-    
+
     habit = Habit.create(habit_data, user_id)
 
     return jsonify(habit.to_json()), 201
@@ -100,7 +102,7 @@ def update_habit(user_id, habit_id):
     habit = Habit.query.get(habit_id)
     if habit is None:
         raise NotFound("Habit not found")
-    
+
     habit.update(habit_data)
 
     return jsonify(habit.to_json()), 201

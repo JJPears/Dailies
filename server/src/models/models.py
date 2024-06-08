@@ -2,6 +2,7 @@
 Module containing database entities for user and habit, alongside logic for operations
 such as updating and creating.
 """
+
 import logging
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.exceptions import BadRequest, NotFound
@@ -122,7 +123,7 @@ class Habit(db.Model):
             if field in ("id", "user_id"):
                 continue
             setattr(self, field, habit_data[field])
-        
+
         db.session.commit()
 
     @staticmethod
@@ -147,13 +148,17 @@ class Habit(db.Model):
         valid, error = DataValidator.validate_habit_data(habit_data)
         if not valid:
             raise BadRequest(error)
-        
+
         try:
             habit = Habit(name=habit_data["name"], user_id=user_id)
             db.session.add(habit)
             db.session.commit()
         except SQLAlchemyError as e:
             db.session.rollback()
-            logging.error("An error occurred while creating habit for user %s: %s", user_id, e)
-            raise BadRequest(f"An error occurred while creating habit for user {user_id}") from e
+            logging.error(
+                "An error occurred while creating habit for user %s: %s", user_id, e
+            )
+            raise BadRequest(
+                f"An error occurred while creating habit for user {user_id}"
+            ) from e
         return habit
