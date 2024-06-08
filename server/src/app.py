@@ -7,9 +7,11 @@ from flask import Flask
 from dotenv import load_dotenv
 from server.src.database import db
 from server.src.controllers.user_controller import user_controller
+from server.src.exceptions.error_handler import ERROR_HANDLERS
 
 
 load_dotenv()
+
 
 def create_app(test_config=None):
     """
@@ -29,12 +31,16 @@ def create_app(test_config=None):
     if test_config is None:
         dailies_app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URI")
         dailies_app.config.from_mapping(
-            SECRET_KEY=os.environ.get('SECRET_KEY') or 'dev',
+            SECRET_KEY=os.environ.get("SECRET_KEY") or "dev",
         )
     else:
         dailies_app.config.update(test_config)
 
     db.init_app(dailies_app)
+
+    for exception, handler in ERROR_HANDLERS.items():
+        dailies_app.register_error_handler(exception, handler)
+
     dailies_app.register_blueprint(user_controller)
 
     return dailies_app
