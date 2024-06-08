@@ -10,8 +10,8 @@ def test_user_validator_fields_with_null_values():
     assert DataValidator.validate_user_data(user_data) == (True, None)
 
 def test_user_validator_missing_field():
-    user_data = {"name": "test", "email": "test@example.com"}
-    assert DataValidator.validate_user_data(user_data) == (False, "Missing mandatory field: password")
+    user_data = {"name": "test"}
+    assert DataValidator.validate_user_data(user_data) == (False, "Missing mandatory fields: email, password")
 
 def test_habit_validator_all_fields_present():
     habit_data = {"name": "test habit"}
@@ -23,4 +23,4 @@ def test_habit_validator_fields_with_null_values():
 
 def test_habit_validator_missing_field():
     habit_data = {}
-    assert DataValidator.validate_habit_data(habit_data) == (False, "Missing mandatory field: name")
+    assert DataValidator.validate_habit_data(habit_data) == (False, "Missing mandatory fields: name")
