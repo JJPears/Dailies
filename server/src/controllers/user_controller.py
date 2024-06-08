@@ -2,13 +2,10 @@
 This module is a controller for the user model and its associated habits.
 It handles the requests for creating, updating, and getting users and habits.
 """
-
-from sqlalchemy.exc import DataError
-from sqlalchemy.exc import IntegrityError
 from flask import request, jsonify, Blueprint
+from werkzeug.exceptions import NotFound, BadRequest
 from server.src.models.models import User, Habit
 from server.src.database import db
-import logging
 
 user_controller = Blueprint("user_controller", __name__)
 
@@ -24,13 +21,10 @@ def get_user(user_id):
     """
     user = User.query.get(user_id)
     if user is None:
-        return jsonify({"error": "User not found"}), 404
+        print("Testting")
+        raise NotFound("User not found")
     return jsonify(user.to_json()), 200
 
-
-# TODO add some validation here, currently it's possible to pass null values
-# for fields and will throw an integrity exception in DB
-# Need some kind of validation before we get to data layer
 @user_controller.route("/user", methods=["POST"])
 def create_user():
     """
@@ -41,14 +35,11 @@ def create_user():
     """
     user_data = request.get_json()
     if not user_data:
-        return jsonify({"error": "No data provided for creating user"}), 400
-    try:
-        user = User.create(user_data)
-        db.session.commit()
-    except ValueError as e:
-        return jsonify({"error": str(e)}), 400
-    except (IntegrityError, DataError) as e:
-        return jsonify({"error": "Data integrity error: " + str(e)}), 400
+        raise BadRequest("No user data provided")
+
+    user = User.create(user_data)
+    db.session.commit()
+
     return jsonify(user.to_json()), 201
 
 
@@ -63,17 +54,11 @@ def update_user(user_id):
     """
     user_data = request.get_json()
     if not user_data:
-        return jsonify({"error": "No data provided"}), 400
+        raise BadRequest("No user data provided")
     user = User.query.get(user_id)
     if user is None:
-        return jsonify({"error": "User not found"}), 404
-    try:
-        user.update(user_data)
-        db.session.commit()
-    except ValueError as e:
-        return jsonify({"error": str(e)}), 400
-    except (IntegrityError, DataError) as e:
-        return jsonify({"error": "Data integrity error: " + str(e)}), 400
+        raise NotFound("User not found")
+    user.update(user_data)
 
     return jsonify(user.to_json()), 201
 
@@ -89,15 +74,10 @@ def create_habit(user_id):
     """
     habit_data = request.get_json()
     if not habit_data:
-        return jsonify({"error": "No data provided for creating habit"}), 400
-    try:
-        habit = Habit.create(habit_data, user_id)
-        db.session.commit()
-    except ValueError as e:
-        return jsonify({"error": str(e)}), 400
-    except (IntegrityError, DataError) as e:
-        logging.error("Data integrity error: %s", e)
-        return jsonify({"error": "Data integrity error"}), 400
+        raise BadRequest("No habit data provided")
+    
+    habit = Habit.create(habit_data, user_id)
+
     return jsonify(habit.to_json()), 201
 
 
@@ -113,20 +93,14 @@ def update_habit(user_id, habit_id):
     """
     habit_data = request.get_json()
     if not habit_data:
-        return jsonify({"error": "No data provided"}), 400
+        raise BadRequest("No habit data provided")
     user = User.query.get(user_id)
     if user is None:
-        return jsonify({"error": "User not found"}), 404
+        raise NotFound("User not found")
     habit = Habit.query.get(habit_id)
     if habit is None:
-        return jsonify({"error": "Habit not found"}), 404
-
-    try:
-        habit.update(habit_data)
-        db.session.commit()
-    except ValueError as e:
-        return jsonify({"error": str(e)}), 400
-    except (IntegrityError, DataError) as e:
-        return jsonify({"error": "Data integrity error: " + str(e)}), 400
+        raise NotFound("Habit not found")
+    
+    habit.update(habit_data)
 
     return jsonify(habit.to_json()), 201

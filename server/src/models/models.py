@@ -2,7 +2,9 @@
 Module containing database entities for user and habit, alongside logic for operations
 such as updating and creating.
 """
-
+import logging
+from sqlalchemy.exc import SQLAlchemyError
+from werkzeug.exceptions import BadRequest, NotFound
 from server.src.database import db
 from ..models.helpers import DataValidator
 
@@ -40,11 +42,13 @@ class User(db.Model):
         """
         valid, error = DataValidator.validate_user_data(user_data)
         if not valid:
-            raise ValueError(error)
+            raise BadRequest(error)
         for field in user_data:
             if field == "id":
                 continue
             setattr(self, field, user_data[field])
+
+        db.session.commit()
 
     @staticmethod
     def create(user_data):
@@ -64,7 +68,7 @@ class User(db.Model):
         # TODO look into using either marshamllow or pydantic for validation
         valid, error = DataValidator.validate_user_data(user_data)
         if not valid:
-            raise ValueError(error)
+            raise BadRequest(error)
         if "id" in user_data:
             user_data.pop("id")
 
@@ -74,7 +78,7 @@ class User(db.Model):
             for habit_data in habits_data:
                 valid, error = DataValidator.validate_habit_data(habit_data)
                 if not valid:
-                    raise ValueError(error)
+                    raise BadRequest(error)
                 habit = Habit(name=habit_data["name"])
                 habits.append(habit)
 
@@ -113,11 +117,13 @@ class Habit(db.Model):
         """
         valid, error = DataValidator.validate_habit_data(habit_data)
         if not valid:
-            raise ValueError(error)
+            raise BadRequest(error)
         for field in habit_data:
             if field in ("id", "user_id"):
                 continue
             setattr(self, field, habit_data[field])
+        
+        db.session.commit()
 
     @staticmethod
     def create(habit_data, user_id):
@@ -137,10 +143,17 @@ class Habit(db.Model):
         user = User.query.get(user_id)
 
         if user is None:
-            raise ValueError("User not found")
+            raise NotFound("User not found")
         valid, error = DataValidator.validate_habit_data(habit_data)
         if not valid:
-            raise ValueError(error)
-        habit = Habit(name=habit_data["name"], user_id=user_id)
-        db.session.add(habit)
+            raise BadRequest(error)
+        
+        try:
+            habit = Habit(name=habit_data["name"], user_id=user_id)
+            db.session.add(habit)
+            db.session.commit()
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            logging.error("An error occurred while creating habit for user %s: %s", user_id, e)
+            raise BadRequest(f"An error occurred while creating habit for user {user_id}") from e
         return habit
